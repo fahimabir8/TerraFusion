@@ -1,0 +1,61 @@
+<html>
+<head>
+    <!-- Include Google Maps API script -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Button to Get Started -->
+    <button id="getStartedBtn" onclick="startLocationSelection()">Get Started</button>
+
+    <!-- Map Container -->
+    <div id="map"></div>
+
+    <script>
+        var map;
+        var marker;
+
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: -34.397, lng: 150.644 },
+                zoom: 8
+            });
+
+            // Add a click event listener to the map
+            map.addListener('click', function (event) {
+                placeMarker(event.latLng);
+            });
+        }
+
+        // Place marker on the map and get lat/lng
+        function placeMarker(location) {
+            if (marker) {
+                marker.setPosition(location);
+            } else {
+                marker = new google.maps.Marker({
+                    position: location,
+                    map: map
+                });
+            }
+
+            // Extract the latitude and longitude
+            var lat = location.lat();
+            var lng = location.lng();
+            alert("Selected Latitude: " + lat + ", Longitude: " + lng);
+
+            // Send lat/lng to the backend for Path/Row conversion
+            getPathRow(lat, lng);
+        }
+
+        function startLocationSelection() {
+            // Optionally, center the map to a different starting location
+            map.setCenter({ lat: 37.7749, lng: -122.4194 });
+        }
+    </script>
+</body>
+</html>
