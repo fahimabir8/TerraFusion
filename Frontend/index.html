@@ -1,11 +1,121 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <title>TerraFusion</title>
+  <!-- flowbite cdn -->
+  <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <style>
+    #map {
+      height: 500px; /* Set a fixed height for the map */
+      width: 100%;
+    }
+  </style>
+
+
 </head>
-<body>
+<body class="px-10">
+
+  <div id="navbar"></div>
+
+<div class="relative bg-gradient-to-r from-purple-600 to-blue-600 h-screen text-white overflow-hidden rounded-lg  shadow-xl">
+    <div class="absolute inset-0">
+      <img src="./images/earth-1.jpg" alt="Background Image" class="object-cover object-center w-full h-full rounded-lg" />
+      <div class="absolute inset-0 bg-black opacity-50 rounded-lg"></div>
+    </div>
     
+    <div class="relative z-10 flex flex-col justify-center items-center h-full text-center">
+      <h1 class="text-5xl font-bold leading-tight mb-4 drop-shadow-lg">Welcome to Our Awesome Website</h1>
+      <p class="text-lg text-gray-300 mb-8 drop-shadow-md">Discover amazing features and services that await you.</p>
+      <a href="#" class="bg-blue-900 text-gray-900 hover:bg-blue-700 text-white py-2 px-6 rounded-full text-lg font-semibold transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg">Get Started</a>
+    </div>
+</div>
+
+
+<div class="relative  py-20 mt-10">
+  <div class="max-w-2xl mx-auto text-center">
+    <h2 class="text-4xl font-bold mb-8">Enter your location</h2>
+    <div class="relative">
+      <input type="text" placeholder="Search location..." class="w-full text-lg px-5 py-4 pr-12 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500" />
+      <button class="absolute inset-y-0 right-4 flex items-center">
+        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+ <!-- Map container -->
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+  <script>
+    // Initialize the map and set its view
+    const map = L.map('map').setView([51.505, -0.09], 13);
+  
+    // Add the OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+  
+    let marker;
+    map.on('click', function(e) {
+      const { lat, lng } = e.latlng;
+  
+      // Log lat and lon to the console (optional)
+      console.log(`Latitude: ${lat}, Longitude: ${lng}`);
+  
+      // Remove existing marker (if any)
+      if (marker) {
+        map.removeLayer(marker);
+      }
+  
+      // Add new marker at the selected location
+      marker = L.marker([lat, lng]).addTo(map)
+        .bindPopup(`Latitude: ${lat}, Longitude: ${lng}`)
+        .openPopup();
+  
+      // Send latitude and longitude to the backend using Fetch API
+      fetch('http://127.0.0.1:8000/get-path-row/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',  // Set content type to JSON
+          'X-CSRFToken': '{{ csrf_token }}'  // Add CSRF token if necessary
+        },
+        body: JSON.stringify({  // Convert the latitude and longitude to a JSON string
+          'latitude': lat,
+          'longitude': lng
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.path && data.row) {
+          console.log(`Path: ${data.path}, Row: ${data.row}`);
+          alert(`Path: ${data.path}, Row: ${data.row}`);
+        } else {
+          alert('No matching Path/Row found.');
+        }
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+
+<!-- flowbite cdn -->
+<script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+
+<!-- js files -->
+ <script src="navbar.js"></script>
+ <script src="auth.js"></script>
 </body>
 </html>

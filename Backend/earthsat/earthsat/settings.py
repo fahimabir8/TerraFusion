@@ -29,7 +29,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['127.0.0.1','localhost',]
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'authorization',
+    'landsat',
     
     #own 
     "rest_framework",
@@ -67,8 +68,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:5500"]
 
-CSRF_TRUSTED_ORIGINS =['http://127.0.0.1:8000/',
-'https://offshift-j17p9ga19-abirs-projects-dc8c81b7.vercel.app',]
+CSRF_TRUSTED_ORIGINS =['http://127.0.0.1:8000/', 'http://127.0.0.1:5500','http://localhost:5500',]
 
 
 MIDDLEWARE = [
