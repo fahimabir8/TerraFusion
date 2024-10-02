@@ -1,27 +1,31 @@
-import pandas as pd
-
-# Load the CSV file containing satellite passing data (Path, Row, Time)
-satellite_data = pd.read_csv('satellite_passing_times.csv')
-
-def get_satellite_passing_time(path, row):
-    # Filter the data to find the corresponding Path/Row entry
-    result = satellite_data[(satellite_data['Path'] == path) & (satellite_data['Row'] == row)]
-    
-    if not result.empty:
-        return result.iloc[0]['Time']  # Return the passing time
-    else:
+def process_satellite_data(data, user_path, user_row):
+    if data is None:
         return None
 
-@app.route('/satellite_pass_time', methods=['POST'])
-def satellite_pass_time():
-    data = request.json
-    path = data['path']
-    row = data['row']
-    
-    passing_time = get_satellite_passing_time(path, row)
-    
-    if passing_time:
-        return jsonify({'time': passing_time})
-    else:
-        return jsonify({'error': 'No satellite passing time found'}), 404
+    lines = data.splitlines()
+    for line in lines:
+        # Assuming the columns are separated by commas
+        parts = line.split(',')
+        if len(parts) < 3:
+            continue
+        
+        # Parse Path, Row, and Time from the line
+        path = parts[0].strip()
+        row = parts[1].strip()
+        time_of_pass = parts[2].strip()
 
+        # Check if path and row match
+        if path == str(user_path) and row == str(user_row):
+            return time_of_pass
+    return None
+
+# Example: User's path and row (You will need to set this dynamically based on your conversion)
+user_path = 137
+user_row = 43
+
+# Process Landsat 8 and 9 data
+landsat8_time = process_satellite_data(landsat8_data, user_path, user_row)
+landsat9_time = process_satellite_data(landsat9_data, user_path, user_row)
+
+print(f"Landsat 8 time: {landsat8_time}")
+print(f"Landsat 9 time: {landsat9_time}")
