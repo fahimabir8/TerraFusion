@@ -48,7 +48,9 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     'corsheaders',
     "django_filters",
-    "whitenoise.runserver_nostatic",
+    'whitenoise.runserver_nostatic',
+    'django_celery_beat',
+    'channels',
     
 ]
 
@@ -102,6 +104,33 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'earthsat.wsgi.application'
+
+# Set up Channels
+ASGI_APPLICATION = 'earthsat.asgi.application'
+
+# # Celery Configuration Options
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Redis URL
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+# CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+
+# Celery settings
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Assuming you're using Redis
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 
 # Database
